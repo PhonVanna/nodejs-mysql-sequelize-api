@@ -39,17 +39,32 @@ exports.save = (req, res) => {
         });
     }
 
-    models.Post.create(post).then(result => {
-        res.status(201).json({
-            message: "Post has been created!",
-            post: result
-        });
+    models.Category.findByPk(req.body.category_id).then(result => {
+        if(result !== null) {
+            models.Post.create(post).then(result => {
+                res.status(201).json({
+                    message: "Post has been created!",
+                    post: result
+                });
+            }).catch(error => {
+                res.status(500).json({
+                    message: "Something went wrong!",
+                    error: error
+                });
+            });
+        }else{
+            res.status(400).json({
+                message: "Invalid Category ID"
+            });
+        }
     }).catch(error => {
         res.status(500).json({
             message: "Something went wrong!",
             error: error
         });
     });
+
+    
 }
 
 
@@ -101,17 +116,31 @@ exports.update = (req, res) => {
         });
     }
 
-    models.Post.update(updatePost, {where: {id:id, userId:userId}}).then(result => {
-        res.status(200).json({
-            message: "Updated Post Successfully",
-            post: updatePost
-        });
+    models.Category.findByPk(req.body.category_id).then(result => {
+        if(result !== null) {
+            models.Post.update(updatePost, {where: {id:id, userId:userId}}).then(result => {
+                res.status(200).json({
+                    message: "Updated Post Successfully",
+                    post: updatePost
+                });
+            }).catch(error => {
+                res.status(500).json({
+                    message: "Something went wrong!",
+                    error: error
+                });
+            });
+        }else{
+            res.status(400).json({
+                message: "Invalid Category ID"
+            });
+        }
     }).catch(error => {
         res.status(500).json({
             message: "Something went wrong!",
             error: error
         });
     });
+
 }
 
 exports.destroy = (req, res) => {
