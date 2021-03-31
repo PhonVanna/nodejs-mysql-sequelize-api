@@ -1,7 +1,8 @@
 const Validator = require('fastest-validator');
 const models = require('../models');
 
-exports.index = (req, res) => {
+exports.index = (req, res) => { 
+    
     models.Post.findAll().then(result => {
         res.status(201).json(result);
     }).catch(error =>{
@@ -19,7 +20,7 @@ exports.save = (req, res) => {
         content: req.body.content,
         imageUrl: req.body.image_url,
         categoryId: req.body.category_id,
-        userId: 1,
+        userId: req.userData.userId,
     }
 
     const schema = {
@@ -89,6 +90,7 @@ exports.show = (req, res) => {
 
 
 exports.update = (req, res) => {
+
     const id = req.params.id;
     const updatePost = {
         title: req.body.title,
@@ -97,7 +99,7 @@ exports.update = (req, res) => {
         categoryId: req.body.category_id
     }
 
-    const userId = 1;
+    const userId = req.userData.userId;
 
     const schema = {
         title: {type:"string", optional: false, max: "100"},
@@ -144,8 +146,9 @@ exports.update = (req, res) => {
 }
 
 exports.destroy = (req, res) => {
+
     const id = req.params.id;
-    const userId = 1;
+    const userId = req.userData.userId;
 
     models.Post.destroy({ where:{id:id, userId:userId}}).then(result => {
         res.status(200).json({
