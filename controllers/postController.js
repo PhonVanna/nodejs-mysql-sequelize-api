@@ -84,6 +84,23 @@ exports.update = (req, res) => {
 
     const userId = 1;
 
+    const schema = {
+        title: {type:"string", optional: false, max: "100"},
+        content: {type:"string", optional: false, max:"500"},
+        categoryId: {type:"number", optional: false}
+    }
+
+    const v = new Validator();
+    //from const post above
+    const validationResponse = v.validate(updatePost, schema);
+
+    if(validationResponse !== true){
+        return res.status(400).json({
+            message: "Validation Failed!",
+            errors: validationResponse
+        });
+    }
+
     models.Post.update(updatePost, {where: {id:id, userId:userId}}).then(result => {
         res.status(200).json({
             message: "Updated Post Successfully",
