@@ -40,6 +40,7 @@ exports.signUp = (req, res) => {
 
 
 exports.login = (req, res) => {
+
     models.User.findOne({where:{email: req.body.email}}).then(user => {
         if(user === null) {
             res.status(401).json({
@@ -48,7 +49,7 @@ exports.login = (req, res) => {
         }else{
             bcryptjs.compare(req.body.password, user.password, (err, result) => {
                 if(result){
-                    const token = jwt.sign({email: user.email, userId: user.id}, 'secret', (err, token) => {
+                    const token = jwt.sign({email: user.email, userId: user.id}, process.env.JWT_KEY, (err, token) => {
                         res.status(200).json({
                             message: "Access Successfully",
                             token: token
