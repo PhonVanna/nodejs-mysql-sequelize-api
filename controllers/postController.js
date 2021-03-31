@@ -1,5 +1,5 @@
+const Validator = require('fastest-validator');
 const models = require('../models');
-
 
 exports.index = (req, res) => {
     models.Post.findAll().then(result => {
@@ -13,13 +13,30 @@ exports.index = (req, res) => {
 }
 
 exports.save = (req, res) => {
-    console.log('click');
+
     const post = {
         title: req.body.title,
         content: req.body.content,
         imageUrl: req.body.image_url,
         categoryId: req.body.category_id,
         userId: 1,
+    }
+
+    const schema = {
+        title: {type:"string", optional: false, max: "100"},
+        content: {type:"string", optional: false, max:"500"},
+        categoryId: {type:"number", optional: false}
+    }
+
+    const v = new Validator();
+    //from const post above
+    const validationResponse = v.validate(post, schema);
+
+    if(validationResponse !== true){
+        return res.status(400).json({
+            message: "Validation Failed!",
+            errors: validationResponse
+        });
     }
 
     models.Post.create(post).then(result => {
